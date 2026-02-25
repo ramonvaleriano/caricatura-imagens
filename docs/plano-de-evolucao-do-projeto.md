@@ -6,11 +6,12 @@ Concluido nesta fase inicial:
 
 1. estrutura base da API com FastAPI;
 2. rotas de healthcheck e rota padrao;
-3. rotas de fotos (`/photos/input`, `/photos/output`, `/photos/output/{photo_name}`);
+3. rotas de fotos (`/photos/input`, `/photos/process`, `/photos/output`, `/photos/output/{photo_name}`);
 4. configuracao de CORS;
 5. configuracao de ambiente via `.env`;
 6. estrutura de armazenamento em `app/data/input` e `app/data/output`;
-7. documentacao OpenAPI com respostas de sucesso e erro.
+7. agente placeholder para processamento inicial;
+8. documentacao OpenAPI com respostas de sucesso e erro.
 
 ## Como iremos fazer
 

@@ -16,8 +16,9 @@ Fluxo atual de inicializacao:
 - `app/run.py`: composicao da aplicacao e registro das rotas.
 - `app/core/settings.py`: leitura do `.env` e valores default.
 - `app/core/storage.py`: resolucao de paths e bootstrap de diretorios.
+- `app/controllers/image_agent.py`: agente placeholder de transformacao.
 - `app/routers/health.py`: endpoints basicos (`/` e `/health`).
-- `app/routers/photos.py`: upload, listagem e download de fotos.
+- `app/routers/photos.py`: upload, processamento, listagem e download de fotos.
 - `app/models/photo_models.py`: schemas de sucesso e erro para Swagger.
 
 ## Fluxo de requisicao
@@ -30,6 +31,7 @@ Client -> FastAPI (app/run.py) -> Router (app/routers/*) -> Response
 
 ```text
 POST /photos/input -> app/data/input/input_photo.<ext> (substitui anterior)
+POST /photos/process -> app/data/output/output_photoN.<ext> (salva e retorna arquivo)
 GET /photos/output -> lista arquivos em app/data/output
 GET /photos/output/{photo_name} -> retorna arquivo por nome base
 ```

@@ -6,7 +6,9 @@ caricatura-imagens/
 │   ├── launch.json          # atalhos de run/debug no VS Code
 │   └── settings.json        # interpretador/env padrao
 ├── app/
-│   ├── controllers/        # reservado para regras de controle (a preencher)
+│   ├── controllers/
+│   │   ├── __init__.py
+│   │   └── image_agent.py  # agente placeholder de processamento
 │   ├── core/
 │   │   ├── cors.py         # configuracao de CORS
 │   │   ├── settings.py     # variaveis de ambiente

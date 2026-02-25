@@ -59,6 +59,32 @@ Erros possiveis:
 - `422`: payload invalido (ex: campo `file` ausente).
 - `500`: falha interna ao salvar arquivo.
 
+### `POST /photos/process`
+
+Processa a foto atual no diretorio `input` com o agente e retorna a imagem resultante.
+
+Comportamento atual:
+
+- o agente placeholder retorna a mesma imagem de entrada sem alteracoes.
+
+Comportamento futuro:
+
+- o agente aplicara transformacao de IA antes de retornar.
+
+Regras:
+
+- nao recebe payload no body;
+- exige existir exatamente 1 foto em `app/data/input`;
+- salva o resultado em `app/data/output` como `output_photoN.<ext>`;
+- retorna o arquivo de imagem no response.
+
+Erros possiveis:
+
+- `404`: nenhuma foto no input.
+- `409`: mais de uma foto no input.
+- `415`: formato da foto de input nao suportado.
+- `500`: erro interno no agente ou ao salvar output.
+
 ### `GET /photos/output`
 
 Lista todas as fotos geradas pela IA no diretorio de saida.
@@ -116,6 +142,12 @@ Listagem:
 
 ```bash
 curl -X GET "http://localhost:8000/photos/output"
+```
+
+Processamento pelo agente:
+
+```bash
+curl -X POST "http://localhost:8000/photos/process" --output processed.jpg
 ```
 
 Download por nome base:

@@ -5,6 +5,7 @@ from pathlib import Path
 from fastapi import APIRouter, File, HTTPException, UploadFile, status
 from fastapi.responses import FileResponse
 
+from app.controllers.image_agent import process_image_with_agent
 from app.core import settings
 from app.core.storage import (
     get_allowed_input_extensions,
@@ -156,6 +157,73 @@ GET_GENERATED_RESPONSES = {
     },
 }
 
+PROCESS_INPUT_RESPONSES = {
+    200: {
+        "description": "Imagem processada retornada com sucesso.",
+        "content": {"image/*": {}},
+    },
+    404: {
+        "model": APIErrorResponse,
+        "description": "Nenhuma foto encontrada no diretorio de input.",
+        "content": {
+            "application/json": {
+                "example": {
+                    "detail": {
+                        "code": "INPUT_PHOTO_NOT_FOUND",
+                        "message": "Nao existe foto no diretorio de input para processar.",
+                        "details": {"input_directory": "app/data/input"},
+                    }
+                }
+            }
+        },
+    },
+    409: {
+        "model": APIErrorResponse,
+        "description": "Mais de uma foto encontrada no diretorio de input.",
+        "content": {
+            "application/json": {
+                "example": {
+                    "detail": {
+                        "code": "MULTIPLE_INPUT_PHOTOS",
+                        "message": "Existe mais de uma foto no diretorio de input.",
+                        "details": {"files_found": ["input_photo.jpg", "input_photo.png"]},
+                    }
+                }
+            }
+        },
+    },
+    415: {
+        "model": APIErrorResponse,
+        "description": "Formato da foto de input nao suportado.",
+        "content": {
+            "application/json": {
+                "example": {
+                    "detail": {
+                        "code": "UNSUPPORTED_INPUT_FILE_FORMAT",
+                        "message": "Formato da foto de input nao suportado.",
+                        "details": {"allowed_extensions": [".jpeg", ".jpg", ".png", ".webp"]},
+                    }
+                }
+            }
+        },
+    },
+    500: {
+        "model": APIErrorResponse,
+        "description": "Falha interna no processamento do agente.",
+        "content": {
+            "application/json": {
+                "example": {
+                    "detail": {
+                        "code": "FAILED_TO_PROCESS_IMAGE",
+                        "message": "Nao foi possivel processar a foto de input com o agente.",
+                        "details": {"error": "Agent timeout"},
+                    }
+                }
+            }
+        },
+    },
+}
+
 
 def _raise_api_error(
     status_code: int,
@@ -167,6 +235,30 @@ def _raise_api_error(
         status_code=status_code,
         detail={"code": code, "message": message, "details": details},
     )
+
+
+def _list_visible_files(directory: Path) -> list[Path]:
+    return [
+        file
+        for file in directory.iterdir()
+        if file.is_file() and not file.name.startswith(".")
+    ]
+
+
+def _next_output_file_name(output_dir: Path, extension: str) -> str:
+    max_index = 0
+    base_name = settings.output_photo_default_name
+
+    for file in _list_visible_files(output_dir):
+        stem = file.stem
+        if not stem.startswith(base_name):
+            continue
+
+        suffix = stem[len(base_name):]
+        if suffix.isdigit():
+            max_index = max(max_index, int(suffix))
+
+    return f"{base_name}{max_index + 1}{extension}"
 
 
 @router.post(
@@ -249,6 +341,109 @@ async def upload_input_photo(
         file_name=target_file_name,
         format=file_extension.lstrip("."),
         location=location,
+    )
+
+
+@router.post(
+    "/process",
+    response_class=FileResponse,
+    summary="Processar foto de input com o agente de IA",
+    description=(
+        "Processa a foto atual armazenada em `app/data/input` usando o agente.\n\n"
+        "Comportamento atual do agente: retorna a mesma imagem sem modificacao.\n"
+        "Comportamento futuro: aplicara transformacoes de IA na imagem.\n\n"
+        "- Esta rota nao recebe payload no body;\n"
+        "- espera existir exatamente 1 arquivo no diretorio de input;\n"
+        "- salva o resultado em `app/data/output` com numeracao automatica;\n"
+        "- retorna a imagem processada no response."
+    ),
+    responses=PROCESS_INPUT_RESPONSES,
+)
+def process_input_photo() -> FileResponse:
+    """Processa a foto de input com o agente placeholder e retorna o arquivo gerado."""
+    input_dir = get_input_photos_dir()
+    output_dir = get_generated_photos_dir()
+    allowed_extensions = get_allowed_input_extensions()
+
+    try:
+        input_files = _list_visible_files(input_dir)
+    except OSError as exc:
+        _raise_api_error(
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
+            "FAILED_TO_READ_INPUT_DIRECTORY",
+            "Nao foi possivel ler o diretorio de input.",
+            {"error": str(exc)},
+        )
+
+    if not input_files:
+        _raise_api_error(
+            status.HTTP_404_NOT_FOUND,
+            "INPUT_PHOTO_NOT_FOUND",
+            "Nao existe foto no diretorio de input para processar.",
+            {"input_directory": str(input_dir)},
+        )
+
+    if len(input_files) > 1:
+        _raise_api_error(
+            status.HTTP_409_CONFLICT,
+            "MULTIPLE_INPUT_PHOTOS",
+            "Existe mais de uma foto no diretorio de input.",
+            {"files_found": sorted(file.name for file in input_files)},
+        )
+
+    input_photo = input_files[0]
+    input_extension = input_photo.suffix.lower()
+
+    if input_extension not in allowed_extensions:
+        _raise_api_error(
+            status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+            "UNSUPPORTED_INPUT_FILE_FORMAT",
+            "Formato da foto de input nao suportado.",
+            {"allowed_extensions": sorted(allowed_extensions)},
+        )
+
+    try:
+        processed_bytes = process_image_with_agent(input_photo)
+    except OSError as exc:
+        _raise_api_error(
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
+            "FAILED_TO_PROCESS_IMAGE",
+            "Nao foi possivel processar a foto de input com o agente.",
+            {"error": str(exc)},
+        )
+    except Exception as exc:
+        _raise_api_error(
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
+            "AGENT_RUNTIME_ERROR",
+            "Falha inesperada durante a execucao do agente.",
+            {"error": str(exc)},
+        )
+
+    if not processed_bytes:
+        _raise_api_error(
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
+            "EMPTY_AGENT_OUTPUT",
+            "O agente retornou uma imagem vazia.",
+        )
+
+    try:
+        output_file_name = _next_output_file_name(output_dir, input_extension)
+        output_file_path = output_dir / output_file_name
+        output_file_path.write_bytes(processed_bytes)
+    except OSError as exc:
+        _raise_api_error(
+            status.HTTP_500_INTERNAL_SERVER_ERROR,
+            "FAILED_TO_SAVE_OUTPUT_PHOTO",
+            "Nao foi possivel salvar a foto processada no diretorio de output.",
+            {"error": str(exc)},
+        )
+
+    media_type = mimetypes.guess_type(output_file_path.name)[0] or "application/octet-stream"
+
+    return FileResponse(
+        path=output_file_path,
+        media_type=media_type,
+        filename=output_file_path.name,
     )
 
 

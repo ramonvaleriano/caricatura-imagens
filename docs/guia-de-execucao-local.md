@@ -41,3 +41,7 @@ O `main.py` sobe o `uvicorn` com `reload=True`, entao toda alteracao de codigo r
 ```bash
 curl -X GET http://localhost:8000/health
 ```
+
+```bash
+curl -X POST "http://localhost:8000/photos/process" --output processed.jpg
+```

@@ -15,6 +15,7 @@ Projeto FastAPI estruturado para pipeline de imagens com:
 Capacidades ja implementadas:
 
 - upload de uma unica foto de entrada (substitui a anterior);
+- processamento da foto de input via agente placeholder;
 - listagem das fotos geradas;
 - download de foto gerada por nome base (sem extensao);
 - criacao automatica dos diretorios de armazenamento ao subir a API.
