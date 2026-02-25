@@ -8,6 +8,7 @@ Projeto FastAPI estruturado para pipeline de imagens com:
 - aplicacao HTTP em `app/run.py`;
 - configuracao por variaveis de ambiente em `app/core/settings.py`;
 - configuracao dedicada da IA em `app/core/ai_config.py`;
+- prompts de IA carregados de arquivos `.md` em `app/prompts`;
 - CORS centralizado em `app/core/cors.py`;
 - gerenciamento de diretorios de arquivos em `app/core/storage.py`;
 - contratos de dados em `app/models/photo_models.py`;

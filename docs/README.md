@@ -30,5 +30,6 @@ Esta pasta concentra toda a documentacao funcional e tecnica da API.
 - configuracao via `.env`
 - suporte a CORS e upload de arquivo `multipart/form-data`
 - integracao de IA com OpenAI (opcional via `OPENAI_ENABLED`)
+- prompts de IA versionados em `app/prompts/*.md`
 - separacao de responsabilidade em `controllers` (fino) e `services` (regra de negocio)
 - estrutura de logs central com cobertura em rotas e service de IA

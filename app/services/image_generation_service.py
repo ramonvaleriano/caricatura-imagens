@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any
 
 from app.core.ai_config import get_ai_config
+from app.core.prompt_loader import get_image_prompts
 
 logger = logging.getLogger(__name__)
 
@@ -57,6 +58,7 @@ def process_image(input_photo_path: Path) -> bytes:
     """
     input_bytes = input_photo_path.read_bytes()
     ai_config = get_ai_config()
+    developer_prompt, user_prompt = get_image_prompts()
     logger.info(
         "Service called | service=image_generation_service input_file=%s openai_enabled=%s",
         input_photo_path.name,
@@ -94,13 +96,13 @@ def process_image(input_photo_path: Path) -> bytes:
             {
                 "role": "developer",
                 "content": [
-                    {"type": "input_text", "text": ai_config.developer_prompt},
+                    {"type": "input_text", "text": developer_prompt},
                 ],
             },
             {
                 "role": "user",
                 "content": [
-                    {"type": "input_text", "text": ai_config.user_prompt},
+                    {"type": "input_text", "text": user_prompt},
                 ],
             },
             {

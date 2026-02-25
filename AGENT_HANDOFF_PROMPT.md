@@ -42,6 +42,7 @@ Modulos principais:
 
 - `app/core/settings.py`: configuracoes por `os.getenv` + `.env`.
 - `app/core/ai_config.py`: normalizacao de configuracao da IA.
+- `app/core/prompt_loader.py`: leitura e cache de prompts `.md` usados pela IA.
 - `app/core/cors.py`: middleware CORS.
 - `app/core/logging_config.py`: configuracao central de logging.
 - `app/core/storage.py`: resolucao de paths e criacao de diretorios.
@@ -50,6 +51,11 @@ Modulos principais:
 - `app/routers/health.py`: `GET /` e `GET /health`.
 - `app/routers/photos.py`: rotas de foto.
 - `app/models/photo_models.py`: modelos de sucesso/erro para OpenAPI.
+
+Diretorios de prompts:
+
+- `app/prompts/image_developer_prompt.md` -> prompt de papel/instrucao de sistema.
+- `app/prompts/image_user_prompt.md` -> prompt de instrucoes ao modelo para estilo/resultado.
 
 Diretorios de dados:
 
@@ -101,6 +107,7 @@ Diretorios de dados:
 8. Erros devem ser consistentes com `APIErrorResponse` (`detail.code`, `detail.message`, `detail.details`).
 9. Nao remover comportamento existente sem justificativa tecnica clara.
 10. Manter logs em todas as rotas e services impactados por alteracoes.
+11. Nunca salvar prompts de IA no `.env`; prompts devem ficar em `app/prompts/*.md`.
 
 ## 6) Padrao de documentacao (Swagger, ReDoc, docs/)
 
@@ -133,14 +140,18 @@ ALLOWED_INPUT_EXTENSIONS="jpg,jpeg,png,webp"
 OPENAI_ENABLED="false"
 OPENAI_API_KEY=""
 OPENAI_MODEL="gpt-5"
-OPENAI_DEVELOPER_PROMPT="Create a caricature of the person in the input image and preserve identity details."
-OPENAI_USER_PROMPT="You are an expert at creating fun, lively, yet realistic caricatures."
 OPENAI_REASONING_EFFORT="medium"
 OPENAI_TEXT_VERBOSITY="medium"
 OPENAI_STORE_RESPONSE="false"
 OPENAI_ENABLE_WEB_SEARCH="false"
 OPENAI_INCLUDE_FIELDS="reasoning.encrypted_content,web_search_call.action.sources"
 ```
+
+Prompts da IA (fora do `.env`):
+
+- `app/prompts/image_developer_prompt.md`
+- `app/prompts/image_user_prompt.md`
+- Leitura centralizada em `app/core/prompt_loader.py`.
 
 ## 8) Dependencias atuais
 

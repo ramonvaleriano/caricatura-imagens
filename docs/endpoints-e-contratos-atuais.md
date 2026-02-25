@@ -87,6 +87,7 @@ Requisitos de configuracao para IA real:
 - `OPENAI_ENABLED=true`
 - `OPENAI_API_KEY` configurada
 - dependencias instaladas via `requirements.txt`
+- prompts preenchidos em `app/prompts/image_developer_prompt.md` e `app/prompts/image_user_prompt.md`
 
 ### `GET /photos/output`
 

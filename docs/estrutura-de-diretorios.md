@@ -22,6 +22,9 @@ caricatura-imagens/
 │   │       └── .gitkeep
 │   ├── models/
 │   │   └── photo_models.py # contratos das rotas de fotos
+│   ├── prompts/
+│   │   ├── image_developer_prompt.md # prompt de papel developer para IA
+│   │   └── image_user_prompt.md      # prompt de papel user para IA
 │   ├── services/
 │   │   ├── __init__.py
 │   │   └── image_generation_service.py # regras da integracao de IA
@@ -43,6 +46,7 @@ caricatura-imagens/
 - configuracoes globais entram em `app/core`;
 - controllers devem ser finos e delegar regra para `services`;
 - regras de negocio e integracoes externas entram em `services`;
+- prompts de IA ficam em arquivos `.md` dentro de `app/prompts`;
 - modelos de entrada/saida entram em `models`;
 - arquivos de entrada e saida de imagem ficam em `app/data`;
 - nomes de pastas/rotas de API devem permanecer em ingles.

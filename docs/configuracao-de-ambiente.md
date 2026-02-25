@@ -22,8 +22,6 @@ As variaveis sao carregadas de `.env` em `app/core/settings.py`, via `load_doten
 - `OPENAI_ENABLED`: ativa/desativa chamada real para OpenAI.
 - `OPENAI_API_KEY`: chave da API OpenAI.
 - `OPENAI_MODEL`: modelo usado no endpoint `/photos/process`.
-- `OPENAI_DEVELOPER_PROMPT`: instrucao developer enviada ao modelo.
-- `OPENAI_USER_PROMPT`: instrucao user enviada ao modelo.
 - `OPENAI_REASONING_EFFORT`: esforco de raciocinio (`low|medium|high`).
 - `OPENAI_TEXT_VERBOSITY`: verbosidade textual (`low|medium|high`).
 - `OPENAI_STORE_RESPONSE`: controla armazenamento remoto da resposta.
@@ -31,6 +29,7 @@ As variaveis sao carregadas de `.env` em `app/core/settings.py`, via `load_doten
 - `OPENAI_INCLUDE_FIELDS`: campos extras incluidos na resposta.
 
 As variaveis `OPENAI_*` sao consumidas e normalizadas em `app/core/ai_config.py`.
+Os prompts sao carregados de arquivos `.md` por `app/core/prompt_loader.py`.
 
 ## Exemplo de `.env`
 
@@ -51,8 +50,6 @@ ALLOWED_INPUT_EXTENSIONS="jpg,jpeg,png,webp"
 OPENAI_ENABLED="false"
 OPENAI_API_KEY=""
 OPENAI_MODEL="gpt-5"
-OPENAI_DEVELOPER_PROMPT="Create a caricature of the person in the input image and preserve identity details."
-OPENAI_USER_PROMPT="You are an expert at creating fun, lively, yet realistic caricatures."
 OPENAI_REASONING_EFFORT="medium"
 OPENAI_TEXT_VERBOSITY="medium"
 OPENAI_STORE_RESPONSE="false"
@@ -80,6 +77,15 @@ OPENAI_INCLUDE_FIELDS="reasoning.encrypted_content,web_search_call.action.source
 - `ALLOWED_INPUT_EXTENSIONS`: lista de extensoes permitidas no upload.
 - `OPENAI_ENABLED=false`: rota `/photos/process` usa fallback e retorna a imagem original.
 - `OPENAI_ENABLED=true`: rota `/photos/process` chama OpenAI.
+
+## Prompts da IA
+
+Arquivos de prompt usados pelo service:
+
+- `app/prompts/image_developer_prompt.md`
+- `app/prompts/image_user_prompt.md`
+
+Esses arquivos sao lidos em runtime e nao devem ficar no `.env`.
 
 ## Dependencias relacionadas
 
