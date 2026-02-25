@@ -134,7 +134,7 @@ def process_image(input_photo_path: Path) -> bytes:
         response = client.responses.create(**request_payload)
     except Exception as exc:
         logger.exception("OpenAI request failed")
-        raise RuntimeError("Failed to call OpenAI Responses API.") from exc
+        raise RuntimeError(f"Failed to call OpenAI Responses API: {exc}") from exc
 
     generated_image_base64 = _extract_generated_image_base64(response)
 

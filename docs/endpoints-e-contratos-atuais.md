@@ -72,7 +72,8 @@ Regras:
 
 - nao recebe payload no body;
 - exige existir exatamente 1 foto em `app/data/input`;
-- salva o resultado em `app/data/output` como `output_photoN.<ext>`;
+- detecta automaticamente o formato da imagem retornada pelo agente;
+- salva o resultado em `app/data/output` como `output_photoN.<ext_detectada>`;
 - retorna o arquivo de imagem no response.
 
 Erros possiveis:

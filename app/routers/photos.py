@@ -279,6 +279,17 @@ def _next_output_file_name(output_dir: Path, extension: str) -> str:
     return f"{base_name}{max_index + 1}{extension}"
 
 
+def _detect_output_extension(image_bytes: bytes) -> str | None:
+    """Detecta extensao de imagem pelos bytes (magic numbers)."""
+    if image_bytes.startswith(b"\xff\xd8\xff"):
+        return ".jpg"
+    if image_bytes.startswith(b"\x89PNG\r\n\x1a\n"):
+        return ".png"
+    if len(image_bytes) >= 12 and image_bytes[:4] == b"RIFF" and image_bytes[8:12] == b"WEBP":
+        return ".webp"
+    return None
+
+
 @router.post(
     "/input",
     response_model=UploadInputPhotoResponse,
@@ -386,12 +397,13 @@ async def upload_input_photo(
         "- Esta rota nao recebe payload no body;\n"
         "- espera existir exatamente 1 arquivo no diretorio de input;\n"
         "- salva o resultado em `app/data/output` com numeracao automatica;\n"
+        "- detecta automaticamente o formato retornado pelo agente;\n"
         "- retorna a imagem processada no response."
     ),
     responses=PROCESS_INPUT_RESPONSES,
 )
 def process_input_photo() -> FileResponse:
-    """Processa a foto de input com o agente placeholder e retorna o arquivo gerado."""
+    """Processa a foto de input com o agente de IA e retorna o arquivo gerado."""
     logger.info("Route called | method=POST path=/photos/process")
     input_dir = get_input_photos_dir()
     output_dir = get_generated_photos_dir()
@@ -435,6 +447,11 @@ def process_input_photo() -> FileResponse:
         )
 
     try:
+        logger.info(
+            "Processing input photo with agent | input_file=%s input_extension=%s",
+            input_photo.name,
+            input_extension,
+        )
         processed_bytes = process_image_with_agent(input_photo)
     except OSError as exc:
         _raise_api_error(
@@ -458,8 +475,10 @@ def process_input_photo() -> FileResponse:
             "O agente retornou uma imagem vazia.",
         )
 
+    output_extension = _detect_output_extension(processed_bytes) or input_extension
+
     try:
-        output_file_name = _next_output_file_name(output_dir, input_extension)
+        output_file_name = _next_output_file_name(output_dir, output_extension)
         output_file_path = output_dir / output_file_name
         output_file_path.write_bytes(processed_bytes)
     except OSError as exc:
@@ -472,9 +491,10 @@ def process_input_photo() -> FileResponse:
 
     media_type = mimetypes.guess_type(output_file_path.name)[0] or "application/octet-stream"
     logger.info(
-        "Photo processed | input_file=%s output_file=%s output_size_bytes=%s",
+        "Photo processed | input_file=%s output_file=%s output_extension=%s output_size_bytes=%s",
         input_photo.name,
         output_file_name,
+        output_extension,
         len(processed_bytes),
     )
 

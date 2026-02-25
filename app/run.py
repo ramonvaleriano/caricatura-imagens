@@ -22,8 +22,10 @@ app.include_router(health_router, tags=["Default"])
 app.include_router(photos_router)
 
 logger.info(
-    "Application started | app=%s version=%s environment=%s",
+    "Application started | app=%s version=%s environment=%s openai_enabled=%s model=%s",
     settings.app_name,
     settings.app_version,
     settings.environment,
+    settings.openai_enabled,
+    settings.openai_model,
 )
