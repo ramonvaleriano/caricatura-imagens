@@ -6,17 +6,17 @@ As variaveis sao carregadas de `.env` em `app/core/settings.py`, via `load_doten
 
 ## Variaveis atuais
 
-- `APP_NAME`
-- `APP_VERSION`
-- `ENVIRONMENT`
-- `DEBUG`
-- `HOST`
-- `PORT`
-- `CORS_ORIGINS`
-- `INPUT_PHOTOS_DIR`
-- `GENERATED_PHOTOS_DIR`
-- `INPUT_PHOTO_DEFAULT_NAME`
-- `ALLOWED_INPUT_EXTENSIONS`
+- `APP_NAME`: nome exibido na documentacao OpenAPI.
+- `APP_VERSION`: versao da API.
+- `ENVIRONMENT`: ambiente logico (development, staging, production).
+- `DEBUG`: flag reservada para comportamento futuro.
+- `HOST`: host de bind do servidor.
+- `PORT`: porta de bind do servidor.
+- `CORS_ORIGINS`: lista de origens permitidas (ou `*`).
+- `INPUT_PHOTOS_DIR`: pasta de armazenamento da foto de entrada.
+- `GENERATED_PHOTOS_DIR`: pasta de armazenamento de fotos geradas.
+- `INPUT_PHOTO_DEFAULT_NAME`: nome base padrao da foto de entrada.
+- `ALLOWED_INPUT_EXTENSIONS`: extensoes aceitas no upload.
 
 ## Exemplo de `.env`
 
@@ -45,3 +45,12 @@ ALLOWED_INPUT_EXTENSIONS="jpg,jpeg,png,webp"
 - `GENERATED_PHOTOS_DIR`: diretorio das fotos geradas pela IA (multiplos arquivos).
 - `INPUT_PHOTO_DEFAULT_NAME`: nome base fixo para salvar foto de entrada.
 - `ALLOWED_INPUT_EXTENSIONS`: lista de extensoes permitidas no upload.
+
+## Dependencias relacionadas
+
+- `python-dotenv`: carregamento de `.env`.
+- `python-multipart`: suporte a upload `multipart/form-data`.
+
+## Observacao sobre reload
+
+Atualmente o `main.py` executa com `reload=True` de forma fixa para desenvolvimento.

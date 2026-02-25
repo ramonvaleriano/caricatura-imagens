@@ -13,12 +13,31 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## Subir servidor
+## Subir servidor pelo terminal
 
 ```bash
 python3 main.py
 ```
 
+## Subir servidor pelo VS Code
+
+Configuracoes ja disponiveis em `.vscode/launch.json`:
+
+- `API: Run (Auto Reload)`
+- `API: Debug`
+
+## Validar se subiu corretamente
+
+1. Abrir `http://localhost:8000/docs`
+2. Abrir `http://localhost:8000/redoc`
+3. Testar `GET /health`
+
 ## Modo de desenvolvimento
 
 O `main.py` sobe o `uvicorn` com `reload=True`, entao toda alteracao de codigo reinicia o servidor automaticamente.
+
+## Exemplo rapido de teste via curl
+
+```bash
+curl -X GET http://localhost:8000/health
+```

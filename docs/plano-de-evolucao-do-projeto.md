@@ -1,22 +1,24 @@
 # Plano de Evolucao do Projeto
 
-## O que iremos fazer
+## Status atual
 
-1. Estruturar modulo de processamento de imagem.
-2. Criar rotas de upload/transformacao.
-3. Implementar camada de servico/controlador.
-4. Integrar provider de IA.
-5. Persistir metadados das requisicoes.
-6. Adicionar autenticacao e controle de acesso.
-7. Criar testes automatizados.
+Concluido nesta fase inicial:
+
+1. estrutura base da API com FastAPI;
+2. rotas de healthcheck e rota padrao;
+3. rotas de fotos (`/photos/input`, `/photos/output`, `/photos/output/{photo_name}`);
+4. configuracao de CORS;
+5. configuracao de ambiente via `.env`;
+6. estrutura de armazenamento em `app/data/input` e `app/data/output`;
+7. documentacao OpenAPI com respostas de sucesso e erro.
 
 ## Como iremos fazer
 
 ### Fase 1 - Base de dominio
 
-- definir contratos de request/response em `models`;
-- criar controllers para regras de negocio;
-- adicionar routers especificos por recurso (`images`, `jobs`, etc.).
+- consolidar padrao VCM em casos de uso reais;
+- mover regras de negocio de roteador para `controllers`;
+- definir nomenclatura final dos recursos (`images`, `jobs`, `providers`).
 
 ### Fase 2 - Integracao IA
 
@@ -28,6 +30,7 @@
 
 - incluir testes unitarios e de integracao;
 - adicionar logs estruturados;
+- adicionar validacoes extras de arquivo (mime type, tamanho maximo);
 - preparar configuracoes por ambiente (dev/hml/prod).
 
 ### Fase 4 - Producao

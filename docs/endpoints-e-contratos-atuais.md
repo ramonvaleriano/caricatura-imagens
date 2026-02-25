@@ -36,6 +36,11 @@ Regras:
 - remove automaticamente a foto anterior de entrada;
 - salva a nova foto com nome padrao + extensao original.
 
+Request:
+
+- Content-Type: `multipart/form-data`
+- Campo obrigatorio: `file` (arquivo)
+
 Resposta de sucesso (200):
 
 ```json
@@ -47,7 +52,12 @@ Resposta de sucesso (200):
 }
 ```
 
-Possiveis erros: `400`, `415`, `422`, `500`.
+Erros possiveis:
+
+- `400`: nome de arquivo invalido ou arquivo vazio.
+- `415`: formato nao suportado.
+- `422`: payload invalido (ex: campo `file` ausente).
+- `500`: falha interna ao salvar arquivo.
 
 ### `GET /photos/output`
 
@@ -71,7 +81,9 @@ Resposta de sucesso (200):
 }
 ```
 
-Possiveis erros: `500`.
+Erros possiveis:
+
+- `500`: falha interna ao listar arquivos.
 
 ### `GET /photos/output/{photo_name}`
 
@@ -88,6 +100,29 @@ Possiveis status:
 - `404`: foto nao encontrada;
 - `409`: mais de uma foto com mesmo nome base;
 - `500`: falha interna.
+
+## Exemplo de chamadas
+
+Upload:
+
+```bash
+curl -X POST "http://localhost:8000/photos/input" \
+  -H "accept: application/json" \
+  -H "Content-Type: multipart/form-data" \
+  -F "file=@/caminho/da/imagem.jpg"
+```
+
+Listagem:
+
+```bash
+curl -X GET "http://localhost:8000/photos/output"
+```
+
+Download por nome base:
+
+```bash
+curl -X GET "http://localhost:8000/photos/output/output_photo1" --output output_photo1.jpg
+```
 
 ## Swagger
 
