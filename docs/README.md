@@ -2,6 +2,60 @@
 
 Esta pasta concentra a documentacao funcional, tecnica e operacional da API.
 
+## Setup rapido (venv, libs e execucao)
+
+Processo recomendado para preparar o ambiente local:
+
+1. Entre na raiz do projeto:
+
+```bash
+cd /home/ramonvaleriano/projetos/caricatura-imagens
+```
+
+2. Crie um ambiente virtual local (venv):
+
+```bash
+python3 -m venv venv
+```
+
+3. Ative o ambiente virtual:
+
+Linux/macOS:
+
+```bash
+source venv/bin/activate
+```
+
+Windows (PowerShell):
+
+```powershell
+venv\\Scripts\\Activate.ps1
+```
+
+4. Instale as dependencias via `requirements.txt`:
+
+```bash
+pip install -r requirements.txt
+```
+
+5. Rode a API:
+
+```bash
+python3 main.py
+```
+
+6. Valide se subiu:
+
+- Swagger: `http://localhost:8000/docs`
+- ReDoc: `http://localhost:8000/redoc`
+- Health: `http://localhost:8000/health`
+
+Boas praticas:
+
+- use sempre o `venv` deste projeto antes de instalar libs;
+- nao instale dependencias globalmente para este projeto;
+- adicione/atualize libs apenas via `requirements.txt`.
+
 ## Documentos disponiveis
 
 1. `contexto-e-objetivo-do-projeto.md`
