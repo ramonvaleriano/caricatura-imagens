@@ -1,3 +1,4 @@
+import logging
 import mimetypes
 import shutil
 from pathlib import Path
@@ -21,6 +22,7 @@ from app.models.photo_models import (
 
 
 router = APIRouter(prefix="/photos", tags=["Photos"])
+logger = logging.getLogger(__name__)
 
 UPLOAD_INPUT_RESPONSES = {
     400: {
@@ -231,6 +233,22 @@ def _raise_api_error(
     message: str,
     details: dict[str, object] | None = None,
 ) -> None:
+    if status_code >= status.HTTP_500_INTERNAL_SERVER_ERROR:
+        logger.error(
+            "API error | status=%s code=%s message=%s details=%s",
+            status_code,
+            code,
+            message,
+            details,
+        )
+    else:
+        logger.warning(
+            "API error | status=%s code=%s message=%s details=%s",
+            status_code,
+            code,
+            message,
+            details,
+        )
     raise HTTPException(
         status_code=status_code,
         detail={"code": code, "message": message, "details": details},
@@ -283,6 +301,11 @@ async def upload_input_photo(
     ),
 ) -> UploadInputPhotoResponse:
     """Faz upload da foto de entrada e substitui qualquer foto anterior existente."""
+    logger.info(
+        "Route called | method=POST path=/photos/input filename=%s",
+        file.filename,
+    )
+
     if not file.filename:
         _raise_api_error(
             status.HTTP_400_BAD_REQUEST,
@@ -336,6 +359,13 @@ async def upload_input_photo(
     except ValueError:
         location = str(target_path)
 
+    logger.info(
+        "Input photo saved | file_name=%s location=%s size_bytes=%s",
+        target_file_name,
+        location,
+        target_path.stat().st_size,
+    )
+
     return UploadInputPhotoResponse(
         message="Foto de entrada salva com sucesso.",
         file_name=target_file_name,
@@ -362,6 +392,7 @@ async def upload_input_photo(
 )
 def process_input_photo() -> FileResponse:
     """Processa a foto de input com o agente placeholder e retorna o arquivo gerado."""
+    logger.info("Route called | method=POST path=/photos/process")
     input_dir = get_input_photos_dir()
     output_dir = get_generated_photos_dir()
     allowed_extensions = get_allowed_input_extensions()
@@ -440,6 +471,12 @@ def process_input_photo() -> FileResponse:
         )
 
     media_type = mimetypes.guess_type(output_file_path.name)[0] or "application/octet-stream"
+    logger.info(
+        "Photo processed | input_file=%s output_file=%s output_size_bytes=%s",
+        input_photo.name,
+        output_file_name,
+        len(processed_bytes),
+    )
 
     return FileResponse(
         path=output_file_path,
@@ -460,6 +497,7 @@ def process_input_photo() -> FileResponse:
 )
 def list_generated_photos() -> ListGeneratedPhotosResponse:
     """Lista todas as fotos geradas pela IA atualmente salvas no diretorio de saida."""
+    logger.info("Route called | method=GET path=/photos/output")
     generated_dir = get_generated_photos_dir()
 
     try:
@@ -486,6 +524,7 @@ def list_generated_photos() -> ListGeneratedPhotosResponse:
         )
         for file in files
     ]
+    logger.info("Generated photos listed | total=%s", len(photos))
 
     return ListGeneratedPhotosResponse(total=len(photos), photos=photos)
 
@@ -502,6 +541,10 @@ def list_generated_photos() -> ListGeneratedPhotosResponse:
 )
 def get_generated_photo(photo_name: str) -> FileResponse:
     """Retorna a foto gerada correspondente ao nome base informado na URL."""
+    logger.info(
+        "Route called | method=GET path=/photos/output/{photo_name} photo_name=%s",
+        photo_name,
+    )
     raw_name = photo_name.strip()
     if not raw_name:
         _raise_api_error(
@@ -552,6 +595,11 @@ def get_generated_photo(photo_name: str) -> FileResponse:
 
     target_file = matches[0]
     media_type = mimetypes.guess_type(target_file.name)[0] or "application/octet-stream"
+    logger.info(
+        "Generated photo served | file_name=%s media_type=%s",
+        target_file.name,
+        media_type,
+    )
 
     return FileResponse(
         path=target_file,

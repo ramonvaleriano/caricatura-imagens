@@ -16,6 +16,7 @@ Fluxo atual de inicializacao:
 - `app/run.py`: composicao da aplicacao e registro das rotas.
 - `app/core/settings.py`: leitura do `.env` e valores default.
 - `app/core/ai_config.py`: normalizacao das configuracoes da IA/OpenAI.
+- `app/core/logging_config.py`: configuracao central de logging da aplicacao.
 - `app/core/storage.py`: resolucao de paths e bootstrap de diretorios.
 - `app/controllers/image_agent.py`: controller fino que delega para service.
 - `app/services/image_generation_service.py`: integracao OpenAI + fallback.
@@ -34,6 +35,13 @@ Fluxo de processamento de IA:
 ```text
 Router (/photos/process) -> Controller (image_agent) -> Service (image_generation_service) -> OpenAI/Fallback
 ```
+
+## Estrutura de logs
+
+- logging central inicializado em `app/run.py` via `setup_logging()`;
+- nivel de log configurado por `LOG_LEVEL`;
+- logs aplicados em todas as rotas (`health` e `photos`);
+- logs aplicados no controller do agente e no service de geracao de imagem.
 
 ## Fluxo de arquivos de imagem
 

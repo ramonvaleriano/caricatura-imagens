@@ -13,6 +13,7 @@ As variaveis sao carregadas de `.env` em `app/core/settings.py`, via `load_doten
 - `HOST`: host de bind do servidor.
 - `PORT`: porta de bind do servidor.
 - `CORS_ORIGINS`: lista de origens permitidas (ou `*`).
+- `LOG_LEVEL`: nivel de log da aplicacao (`DEBUG|INFO|WARNING|ERROR`).
 - `INPUT_PHOTOS_DIR`: pasta de armazenamento da foto de entrada.
 - `GENERATED_PHOTOS_DIR`: pasta de armazenamento de fotos geradas.
 - `INPUT_PHOTO_DEFAULT_NAME`: nome base padrao da foto de entrada.
@@ -41,6 +42,7 @@ DEBUG="false"
 HOST="0.0.0.0"
 PORT="8000"
 CORS_ORIGINS="*"
+LOG_LEVEL="INFO"
 INPUT_PHOTOS_DIR="app/data/input"
 GENERATED_PHOTOS_DIR="app/data/output"
 INPUT_PHOTO_DEFAULT_NAME="input_photo"
@@ -62,6 +64,12 @@ OPENAI_INCLUDE_FIELDS="reasoning.encrypted_content,web_search_call.action.source
 
 - `CORS_ORIGINS="*"`: libera todas as origens.
 - `CORS_ORIGINS="http://localhost:3000,https://dominio.com"`: restringe por lista.
+
+## Logging
+
+- `LOG_LEVEL="DEBUG"`: log detalhado para diagnostico local.
+- `LOG_LEVEL="INFO"`: nivel recomendado para desenvolvimento padrao.
+- `LOG_LEVEL="WARNING"` ou `ERROR`: reduzir verbosidade.
 
 ## Armazenamento de fotos
 

@@ -43,6 +43,7 @@ Modulos principais:
 - `app/core/settings.py`: configuracoes por `os.getenv` + `.env`.
 - `app/core/ai_config.py`: normalizacao de configuracao da IA.
 - `app/core/cors.py`: middleware CORS.
+- `app/core/logging_config.py`: configuracao central de logging.
 - `app/core/storage.py`: resolucao de paths e criacao de diretorios.
 - `app/controllers/image_agent.py`: controller fino para fluxo de IA.
 - `app/services/image_generation_service.py`: service com integracao OpenAI/fallback.
@@ -99,6 +100,7 @@ Diretorios de dados:
 7. Manter controllers finos; regra de negocio e integracao externa em `services`.
 8. Erros devem ser consistentes com `APIErrorResponse` (`detail.code`, `detail.message`, `detail.details`).
 9. Nao remover comportamento existente sem justificativa tecnica clara.
+10. Manter logs em todas as rotas e services impactados por alteracoes.
 
 ## 6) Padrao de documentacao (Swagger, ReDoc, docs/)
 
@@ -122,6 +124,7 @@ DEBUG="false"
 HOST="0.0.0.0"
 PORT="8000"
 CORS_ORIGINS="*"
+LOG_LEVEL="INFO"
 INPUT_PHOTOS_DIR="app/data/input"
 GENERATED_PHOTOS_DIR="app/data/output"
 INPUT_PHOTO_DEFAULT_NAME="input_photo"

@@ -13,6 +13,7 @@ caricatura-imagens/
 │   │   ├── cors.py         # configuracao de CORS
 │   │   ├── settings.py     # variaveis de ambiente
 │   │   ├── ai_config.py    # configuracao dedicada da IA/OpenAI
+│   │   ├── logging_config.py # configuracao central de logs
 │   │   └── storage.py      # paths e operacoes de diretorios de fotos
 │   ├── data/
 │   │   ├── input/          # guarda apenas 1 foto de entrada
