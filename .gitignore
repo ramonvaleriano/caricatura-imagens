@@ -3,3 +3,7 @@ venv/
 .env
 __pycache__/
 **/__pycache__/
+app/data/input/*
+!app/data/input/.gitkeep
+app/data/output/*
+!app/data/output/.gitkeep
