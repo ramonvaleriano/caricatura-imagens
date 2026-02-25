@@ -23,6 +23,9 @@ caricatura-imagens/
 │   │       └── .gitkeep
 │   ├── models/
 │   │   └── photo_models.py         # schemas de resposta e erro
+│   ├── responses/
+│   │   ├── __init__.py
+│   │   └── photo_responses.py      # payloads/responses reutilizaveis das rotas de fotos
 │   ├── prompts/
 │   │   ├── image_developer_prompt.md
 │   │   └── image_user_prompt.md

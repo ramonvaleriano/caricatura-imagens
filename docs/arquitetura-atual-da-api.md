@@ -28,6 +28,7 @@ Fluxo atual de inicializacao:
 - `app/routers/health.py`: endpoints de status e diagnostico (`GET /` e `GET /health`).
 - `app/routers/photos.py`: upload, processamento, listagem e download de fotos.
 - `app/models/photo_models.py`: schemas de sucesso/erro para OpenAPI.
+- `app/responses/photo_responses.py`: payloads `responses` compartilhados das rotas de fotos.
 
 ## Fluxo de requisicao
 

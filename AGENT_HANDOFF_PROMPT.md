@@ -48,6 +48,7 @@ Modulos principais:
 - `app/core/storage.py`: resolucao de paths e criacao de diretorios.
 - `app/controllers/image_agent.py`: controller fino para fluxo de IA.
 - `app/services/image_generation_service.py`: service com integracao OpenAI/fallback.
+- `app/responses/photo_responses.py`: responses compartilhadas das rotas de fotos.
 - `app/routers/health.py`: `GET /` e `GET /health` (inclui espelho de settings com `openai_api_key` booleana).
 - `app/routers/photos.py`: rotas de foto.
 - `app/models/photo_models.py`: modelos de sucesso/erro para OpenAPI.
