@@ -25,7 +25,7 @@ Fluxo atual de inicializacao:
 - `app/core/storage.py`: resolucao de paths e bootstrap dos diretorios de dados.
 - `app/controllers/image_agent.py`: controller fino que delega para service.
 - `app/services/image_generation_service.py`: integracao OpenAI + fallback.
-- `app/routers/health.py`: endpoints basicos (`GET /` e `GET /health`).
+- `app/routers/health.py`: endpoints de status e diagnostico (`GET /` e `GET /health`).
 - `app/routers/photos.py`: upload, processamento, listagem e download de fotos.
 - `app/models/photo_models.py`: schemas de sucesso/erro para OpenAPI.
 

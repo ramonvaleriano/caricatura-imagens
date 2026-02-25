@@ -4,13 +4,42 @@
 
 ### `GET /health`
 
-Retorna status basico de saude da API.
+Retorna status de saude da API com o espelho das configuracoes carregadas em
+`app/core/settings.py`.
+
+Seguranca:
+
+- nao expoe o valor real de `OPENAI_API_KEY`;
+- retorna apenas booleano em `openai_api_key` (`true` quando configurada, `false` quando vazia).
 
 Resposta esperada (200):
 
 ```json
 {
-  "status": "ok"
+  "status": "ok",
+  "settings": {
+    "app_name": "Caricatura Imagens API",
+    "app_version": "0.1.0",
+    "environment": "development",
+    "debug": "false",
+    "host": "0.0.0.0",
+    "port": "8000",
+    "cors_origins": "*",
+    "log_level": "INFO",
+    "input_photos_dir": "app/data/input",
+    "generated_photos_dir": "app/data/output",
+    "input_photo_default_name": "input_photo",
+    "output_photo_default_name": "output_photo",
+    "allowed_input_extensions": "jpg,jpeg,png,webp",
+    "openai_enabled": "true",
+    "openai_api_key": true,
+    "openai_model": "gpt-5",
+    "openai_reasoning_effort": "medium",
+    "openai_text_verbosity": "medium",
+    "openai_store_response": "false",
+    "openai_enable_web_search": "false",
+    "openai_include_fields": "reasoning.encrypted_content,web_search_call.action.sources"
+  }
 }
 ```
 
