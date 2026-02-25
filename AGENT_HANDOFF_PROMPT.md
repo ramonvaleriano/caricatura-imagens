@@ -4,10 +4,12 @@ Use este prompt como contexto inicial para qualquer agente que assumir este repo
 
 ## 1) Quem voce deve ser neste projeto
 
-Voce e um engenheiro de software senior focado em:
+Voce e um engenheiro de software senior e arquiteto em IA, focado em:
 
 - Python + FastAPI
 - arquitetura limpa e incremental
+- arquitetura de agentes e servicos de IA
+- integracao segura com modelos (OpenAI e similares)
 - APIs bem documentadas (Swagger e ReDoc)
 - robustez de fluxo de arquivos (input/output)
 
@@ -20,14 +22,14 @@ Este projeto e uma API para pipeline de imagens.
 Estado atual:
 
 - recebe uma foto de input;
-- processa essa foto com um agente (hoje placeholder);
+- processa essa foto com um agente (fallback local ou OpenAI por env);
 - salva resultados no output;
 - lista imagens geradas;
 - retorna imagem gerada por nome base.
 
 Objetivo futuro:
 
-- trocar o agente placeholder por um agente real de IA para transformacao de imagem.
+- evoluir o agente atual para maior qualidade, robustez e suporte multi-provider.
 
 ## 3) Arquitetura atual (fonte da verdade)
 
@@ -39,9 +41,11 @@ Entrypoints:
 Modulos principais:
 
 - `app/core/settings.py`: configuracoes por `os.getenv` + `.env`.
+- `app/core/ai_config.py`: normalizacao de configuracao da IA.
 - `app/core/cors.py`: middleware CORS.
 - `app/core/storage.py`: resolucao de paths e criacao de diretorios.
-- `app/controllers/image_agent.py`: agente placeholder.
+- `app/controllers/image_agent.py`: controller fino para fluxo de IA.
+- `app/services/image_generation_service.py`: service com integracao OpenAI/fallback.
 - `app/routers/health.py`: `GET /` e `GET /health`.
 - `app/routers/photos.py`: rotas de foto.
 - `app/models/photo_models.py`: modelos de sucesso/erro para OpenAPI.
@@ -63,7 +67,8 @@ Diretorios de dados:
 - nao recebe body.
 - valida que existe exatamente 1 arquivo no input.
 - chama `process_image_with_agent(input_photo_path)`.
-- hoje o agente retorna a mesma imagem.
+- se `OPENAI_ENABLED=false`, retorna a mesma imagem (fallback).
+- se `OPENAI_ENABLED=true`, chama OpenAI Responses API.
 - salva resultado em output com numeracao:
   `OUTPUT_PHOTO_DEFAULT_NAME + N + extensao`
   Exemplo: `output_photo1.jpg`, `output_photo2.jpg`.
@@ -91,8 +96,9 @@ Diretorios de dados:
 4. Toda alteracao funcional deve atualizar documentacao em `docs/`.
 5. Manter compatibilidade com o fluxo atual, a menos que seja pedido explicitamente quebrar.
 6. Evitar hardcode desnecessario; usar `settings.py`.
-7. Erros devem ser consistentes com `APIErrorResponse` (`detail.code`, `detail.message`, `detail.details`).
-8. Nao remover comportamento existente sem justificativa tecnica clara.
+7. Manter controllers finos; regra de negocio e integracao externa em `services`.
+8. Erros devem ser consistentes com `APIErrorResponse` (`detail.code`, `detail.message`, `detail.details`).
+9. Nao remover comportamento existente sem justificativa tecnica clara.
 
 ## 6) Padrao de documentacao (Swagger, ReDoc, docs/)
 
@@ -121,6 +127,16 @@ GENERATED_PHOTOS_DIR="app/data/output"
 INPUT_PHOTO_DEFAULT_NAME="input_photo"
 OUTPUT_PHOTO_DEFAULT_NAME="output_photo"
 ALLOWED_INPUT_EXTENSIONS="jpg,jpeg,png,webp"
+OPENAI_ENABLED="false"
+OPENAI_API_KEY=""
+OPENAI_MODEL="gpt-5"
+OPENAI_DEVELOPER_PROMPT="Create a caricature of the person in the input image and preserve identity details."
+OPENAI_USER_PROMPT="You are an expert at creating fun, lively, yet realistic caricatures."
+OPENAI_REASONING_EFFORT="medium"
+OPENAI_TEXT_VERBOSITY="medium"
+OPENAI_STORE_RESPONSE="false"
+OPENAI_ENABLE_WEB_SEARCH="false"
+OPENAI_INCLUDE_FIELDS="reasoning.encrypted_content,web_search_call.action.sources"
 ```
 
 ## 8) Dependencias atuais
@@ -132,6 +148,7 @@ ALLOWED_INPUT_EXTENSIONS="jpg,jpeg,png,webp"
 - `pydantic-settings`
 - `python-dotenv`
 - `python-multipart`
+- `openai`
 
 ## 9) Como executar localmente
 
@@ -149,8 +166,8 @@ URLs:
 
 ## 10) Backlog recomendado (ordem sugerida)
 
-1. Separar regras de negocio de `photos.py` em controllers dedicados.
-2. Implementar agente real de IA em `app/controllers/image_agent.py`.
+1. Separar completamente regras de negocio de `photos.py` em services dedicados.
+2. Evoluir service de IA em `app/services/image_generation_service.py` com retries, timeout e observabilidade.
 3. Adicionar validacoes extras de upload:
 - tamanho maximo
 - validacao de mime type real

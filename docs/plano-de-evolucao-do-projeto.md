@@ -10,7 +10,7 @@ Concluido nesta fase inicial:
 4. configuracao de CORS;
 5. configuracao de ambiente via `.env`;
 6. estrutura de armazenamento em `app/data/input` e `app/data/output`;
-7. agente placeholder para processamento inicial;
+7. base de integracao OpenAI estruturada com fallback via env;
 8. documentacao OpenAPI com respostas de sucesso e erro.
 
 ## Como iremos fazer
@@ -18,12 +18,12 @@ Concluido nesta fase inicial:
 ### Fase 1 - Base de dominio
 
 - consolidar padrao VCM em casos de uso reais;
-- mover regras de negocio de roteador para `controllers`;
+- mover regras de negocio de roteador para `services` mantendo controllers finos;
 - definir nomenclatura final dos recursos (`images`, `jobs`, `providers`).
 
 ### Fase 2 - Integracao IA
 
-- encapsular chamadas de IA em modulo dedicado;
+- evoluir service de IA para estrategia multi-provider (OpenAI + fallback local);
 - tratar timeout, retries e erros de provider;
 - separar processamento sincrono de assincrono.
 

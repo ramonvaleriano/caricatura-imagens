@@ -8,10 +8,11 @@ caricatura-imagens/
 ├── app/
 │   ├── controllers/
 │   │   ├── __init__.py
-│   │   └── image_agent.py  # agente placeholder de processamento
+│   │   └── image_agent.py  # controller fino para fluxo do agente
 │   ├── core/
 │   │   ├── cors.py         # configuracao de CORS
 │   │   ├── settings.py     # variaveis de ambiente
+│   │   ├── ai_config.py    # configuracao dedicada da IA/OpenAI
 │   │   └── storage.py      # paths e operacoes de diretorios de fotos
 │   ├── data/
 │   │   ├── input/          # guarda apenas 1 foto de entrada
@@ -20,6 +21,9 @@ caricatura-imagens/
 │   │       └── .gitkeep
 │   ├── models/
 │   │   └── photo_models.py # contratos das rotas de fotos
+│   ├── services/
+│   │   ├── __init__.py
+│   │   └── image_generation_service.py # regras da integracao de IA
 │   ├── routers/
 │   │   ├── __init__.py
 │   │   ├── health.py       # rotas basicas da API
@@ -36,7 +40,8 @@ caricatura-imagens/
 
 - novas rotas entram em `app/routers`;
 - configuracoes globais entram em `app/core`;
-- regras de negocio entram em `controllers` quando surgirem;
+- controllers devem ser finos e delegar regra para `services`;
+- regras de negocio e integracoes externas entram em `services`;
 - modelos de entrada/saida entram em `models`;
 - arquivos de entrada e saida de imagem ficam em `app/data`;
 - nomes de pastas/rotas de API devem permanecer em ingles.

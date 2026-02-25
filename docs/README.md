@@ -29,3 +29,5 @@ Esta pasta concentra toda a documentacao funcional e tecnica da API.
 - armazenamento de arquivos em `app/data/input` e `app/data/output`
 - configuracao via `.env`
 - suporte a CORS e upload de arquivo `multipart/form-data`
+- integracao de IA com OpenAI (opcional via `OPENAI_ENABLED`)
+- separacao de responsabilidade em `controllers` (fino) e `services` (regra de negocio)

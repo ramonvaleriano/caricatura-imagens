@@ -15,8 +15,10 @@ Fluxo atual de inicializacao:
 
 - `app/run.py`: composicao da aplicacao e registro das rotas.
 - `app/core/settings.py`: leitura do `.env` e valores default.
+- `app/core/ai_config.py`: normalizacao das configuracoes da IA/OpenAI.
 - `app/core/storage.py`: resolucao de paths e bootstrap de diretorios.
-- `app/controllers/image_agent.py`: agente placeholder de transformacao.
+- `app/controllers/image_agent.py`: controller fino que delega para service.
+- `app/services/image_generation_service.py`: integracao OpenAI + fallback.
 - `app/routers/health.py`: endpoints basicos (`/` e `/health`).
 - `app/routers/photos.py`: upload, processamento, listagem e download de fotos.
 - `app/models/photo_models.py`: schemas de sucesso e erro para Swagger.
@@ -25,6 +27,12 @@ Fluxo atual de inicializacao:
 
 ```text
 Client -> FastAPI (app/run.py) -> Router (app/routers/*) -> Response
+```
+
+Fluxo de processamento de IA:
+
+```text
+Router (/photos/process) -> Controller (image_agent) -> Service (image_generation_service) -> OpenAI/Fallback
 ```
 
 ## Fluxo de arquivos de imagem

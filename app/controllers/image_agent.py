@@ -1,15 +1,11 @@
 from pathlib import Path
 
+from app.services.image_generation_service import process_image
+
 
 def process_image_with_agent(input_photo_path: Path) -> bytes:
     """
-    Placeholder do agente de IA.
-
-    Comportamento atual:
-    - retorna exatamente os mesmos bytes da imagem de entrada.
-
-    Comportamento futuro:
-    - enviar a imagem ao agente de IA e retornar a imagem transformada.
+    Controller fino do agente.
+    Delegacao da regra de geracao para a camada de service.
     """
-    return input_photo_path.read_bytes()
-
+    return process_image(input_photo_path)

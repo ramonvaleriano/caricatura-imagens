@@ -63,13 +63,10 @@ Erros possiveis:
 
 Processa a foto atual no diretorio `input` com o agente e retorna a imagem resultante.
 
-Comportamento atual:
+Comportamento por configuracao:
 
-- o agente placeholder retorna a mesma imagem de entrada sem alteracoes.
-
-Comportamento futuro:
-
-- o agente aplicara transformacao de IA antes de retornar.
+- `OPENAI_ENABLED=false`: retorna a mesma imagem de entrada (fallback).
+- `OPENAI_ENABLED=true`: chama OpenAI e aplica transformacao de IA.
 
 Regras:
 
@@ -84,6 +81,12 @@ Erros possiveis:
 - `409`: mais de uma foto no input.
 - `415`: formato da foto de input nao suportado.
 - `500`: erro interno no agente ou ao salvar output.
+
+Requisitos de configuracao para IA real:
+
+- `OPENAI_ENABLED=true`
+- `OPENAI_API_KEY` configurada
+- dependencias instaladas via `requirements.txt`
 
 ### `GET /photos/output`
 

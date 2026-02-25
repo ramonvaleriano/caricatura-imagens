@@ -350,8 +350,9 @@ async def upload_input_photo(
     summary="Processar foto de input com o agente de IA",
     description=(
         "Processa a foto atual armazenada em `app/data/input` usando o agente.\n\n"
-        "Comportamento atual do agente: retorna a mesma imagem sem modificacao.\n"
-        "Comportamento futuro: aplicara transformacoes de IA na imagem.\n\n"
+        "Comportamento do agente:\n"
+        "- `OPENAI_ENABLED=false`: retorna a mesma imagem de entrada (fallback);\n"
+        "- `OPENAI_ENABLED=true`: chama a OpenAI e retorna a imagem transformada.\n\n"
         "- Esta rota nao recebe payload no body;\n"
         "- espera existir exatamente 1 arquivo no diretorio de input;\n"
         "- salva o resultado em `app/data/output` com numeracao automatica;\n"

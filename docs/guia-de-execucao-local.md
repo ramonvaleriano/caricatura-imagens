@@ -45,3 +45,11 @@ curl -X GET http://localhost:8000/health
 ```bash
 curl -X POST "http://localhost:8000/photos/process" --output processed.jpg
 ```
+
+## Teste de IA real (OpenAI)
+
+1. Definir no `.env`:
+- `OPENAI_ENABLED="true"`
+- `OPENAI_API_KEY="<SUA_CHAVE>"`
+2. Reiniciar a API
+3. Executar `POST /photos/process` novamente

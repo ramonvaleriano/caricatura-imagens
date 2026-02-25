@@ -7,15 +7,17 @@ Projeto FastAPI estruturado para pipeline de imagens com:
 - ponto de entrada em `main.py` (raiz);
 - aplicacao HTTP em `app/run.py`;
 - configuracao por variaveis de ambiente em `app/core/settings.py`;
+- configuracao dedicada da IA em `app/core/ai_config.py`;
 - CORS centralizado em `app/core/cors.py`;
 - gerenciamento de diretorios de arquivos em `app/core/storage.py`;
 - contratos de dados em `app/models/photo_models.py`;
+- camada de service para integracao de IA em `app/services/image_generation_service.py`;
 - rotas centralizadas em `app/routers`.
 
 Capacidades ja implementadas:
 
 - upload de uma unica foto de entrada (substitui a anterior);
-- processamento da foto de input via agente placeholder;
+- processamento da foto de input via agente com fallback/local ou OpenAI (por env);
 - listagem das fotos geradas;
 - download de foto gerada por nome base (sem extensao);
 - criacao automatica dos diretorios de armazenamento ao subir a API.

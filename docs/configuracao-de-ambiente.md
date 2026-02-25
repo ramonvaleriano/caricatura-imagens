@@ -18,6 +18,18 @@ As variaveis sao carregadas de `.env` em `app/core/settings.py`, via `load_doten
 - `INPUT_PHOTO_DEFAULT_NAME`: nome base padrao da foto de entrada.
 - `OUTPUT_PHOTO_DEFAULT_NAME`: nome base padrao para fotos de output numeradas.
 - `ALLOWED_INPUT_EXTENSIONS`: extensoes aceitas no upload.
+- `OPENAI_ENABLED`: ativa/desativa chamada real para OpenAI.
+- `OPENAI_API_KEY`: chave da API OpenAI.
+- `OPENAI_MODEL`: modelo usado no endpoint `/photos/process`.
+- `OPENAI_DEVELOPER_PROMPT`: instrucao developer enviada ao modelo.
+- `OPENAI_USER_PROMPT`: instrucao user enviada ao modelo.
+- `OPENAI_REASONING_EFFORT`: esforco de raciocinio (`low|medium|high`).
+- `OPENAI_TEXT_VERBOSITY`: verbosidade textual (`low|medium|high`).
+- `OPENAI_STORE_RESPONSE`: controla armazenamento remoto da resposta.
+- `OPENAI_ENABLE_WEB_SEARCH`: ativa `web_search_preview`.
+- `OPENAI_INCLUDE_FIELDS`: campos extras incluidos na resposta.
+
+As variaveis `OPENAI_*` sao consumidas e normalizadas em `app/core/ai_config.py`.
 
 ## Exemplo de `.env`
 
@@ -34,6 +46,16 @@ GENERATED_PHOTOS_DIR="app/data/output"
 INPUT_PHOTO_DEFAULT_NAME="input_photo"
 OUTPUT_PHOTO_DEFAULT_NAME="output_photo"
 ALLOWED_INPUT_EXTENSIONS="jpg,jpeg,png,webp"
+OPENAI_ENABLED="false"
+OPENAI_API_KEY=""
+OPENAI_MODEL="gpt-5"
+OPENAI_DEVELOPER_PROMPT="Create a caricature of the person in the input image and preserve identity details."
+OPENAI_USER_PROMPT="You are an expert at creating fun, lively, yet realistic caricatures."
+OPENAI_REASONING_EFFORT="medium"
+OPENAI_TEXT_VERBOSITY="medium"
+OPENAI_STORE_RESPONSE="false"
+OPENAI_ENABLE_WEB_SEARCH="false"
+OPENAI_INCLUDE_FIELDS="reasoning.encrypted_content,web_search_call.action.sources"
 ```
 
 ## CORS
@@ -48,11 +70,14 @@ ALLOWED_INPUT_EXTENSIONS="jpg,jpeg,png,webp"
 - `INPUT_PHOTO_DEFAULT_NAME`: nome base fixo para salvar foto de entrada.
 - `OUTPUT_PHOTO_DEFAULT_NAME`: prefixo usado para salvar novas fotos processadas (`output_photo1`, `output_photo2`, ...).
 - `ALLOWED_INPUT_EXTENSIONS`: lista de extensoes permitidas no upload.
+- `OPENAI_ENABLED=false`: rota `/photos/process` usa fallback e retorna a imagem original.
+- `OPENAI_ENABLED=true`: rota `/photos/process` chama OpenAI.
 
 ## Dependencias relacionadas
 
 - `python-dotenv`: carregamento de `.env`.
 - `python-multipart`: suporte a upload `multipart/form-data`.
+- `openai`: integracao com Responses API para geracao de imagem.
 
 ## Observacao sobre reload
 
