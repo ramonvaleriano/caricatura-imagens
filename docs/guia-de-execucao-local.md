@@ -1,0 +1,24 @@
+# Guia de Execucao Local
+
+## Pre-requisitos
+
+- Python 3.10+
+- dependencias instaladas em `requirements.txt`
+
+## Instalar dependencias
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+## Subir servidor
+
+```bash
+python3 main.py
+```
+
+## Modo de desenvolvimento
+
+O `main.py` sobe o `uvicorn` com `reload=True`, entao toda alteracao de codigo reinicia o servidor automaticamente.
