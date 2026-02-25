@@ -3,50 +3,65 @@
 ```text
 caricatura-imagens/
 ├── .vscode/
-│   ├── launch.json          # atalhos de run/debug no VS Code
-│   └── settings.json        # interpretador/env padrao
+│   ├── launch.json                 # atalhos de run/debug no VS Code
+│   └── settings.json               # env e interpretador Python
 ├── app/
 │   ├── controllers/
 │   │   ├── __init__.py
-│   │   └── image_agent.py  # controller fino para fluxo do agente
+│   │   └── image_agent.py          # controller fino do agente
 │   ├── core/
-│   │   ├── cors.py         # configuracao de CORS
-│   │   ├── settings.py     # variaveis de ambiente
-│   │   ├── ai_config.py    # configuracao dedicada da IA/OpenAI
-│   │   ├── logging_config.py # configuracao central de logs
-│   │   └── storage.py      # paths e operacoes de diretorios de fotos
+│   │   ├── ai_config.py            # normalizacao da configuracao OpenAI
+│   │   ├── cors.py                 # configuracao de CORS
+│   │   ├── logging_config.py       # configuracao central de logs
+│   │   ├── prompt_loader.py        # leitura de prompts em .md
+│   │   ├── settings.py             # configuracoes por os.getenv + .env
+│   │   └── storage.py              # paths e bootstrap dos diretorios de fotos
 │   ├── data/
-│   │   ├── input/          # guarda apenas 1 foto de entrada
+│   │   ├── input/
 │   │   │   └── .gitkeep
-│   │   └── output/         # guarda N fotos geradas pela IA
+│   │   └── output/
 │   │       └── .gitkeep
 │   ├── models/
-│   │   └── photo_models.py # contratos das rotas de fotos
+│   │   └── photo_models.py         # schemas de resposta e erro
 │   ├── prompts/
-│   │   ├── image_developer_prompt.md # prompt de papel developer para IA
-│   │   └── image_user_prompt.md      # prompt de papel user para IA
-│   ├── services/
-│   │   ├── __init__.py
-│   │   └── image_generation_service.py # regras da integracao de IA
+│   │   ├── image_developer_prompt.md
+│   │   └── image_user_prompt.md
 │   ├── routers/
 │   │   ├── __init__.py
-│   │   ├── health.py       # rotas basicas da API
-│   │   └── photos.py       # upload/listagem/download de fotos
-│   ├── views/              # reservado para camada de view (a preencher)
-│   └── run.py              # criacao da app FastAPI
-├── docs/                   # documentacao do projeto
-├── main.py                 # entrypoint para subir servidor
+│   │   ├── health.py
+│   │   └── photos.py
+│   ├── services/
+│   │   ├── __init__.py
+│   │   └── image_generation_service.py
+│   ├── __init__.py
+│   └── run.py                      # criacao da app FastAPI
+├── docs/
+│   ├── README.md
+│   ├── arquitetura-atual-da-api.md
+│   ├── configuracao-de-ambiente.md
+│   ├── contexto-e-objetivo-do-projeto.md
+│   ├── diagnostico-e-troubleshooting.md
+│   ├── endpoints-e-contratos-atuais.md
+│   ├── estrutura-de-diretorios.md
+│   ├── guia-de-execucao-local.md
+│   └── plano-de-evolucao-do-projeto.md
+├── AGENT_HANDOFF_PROMPT.md
+├── main.py                         # entrypoint para rodar servidor local
 ├── requirements.txt
 └── .env
 ```
 
-## Regra de organizacao
+## Regras de organizacao
 
-- novas rotas entram em `app/routers`;
-- configuracoes globais entram em `app/core`;
-- controllers devem ser finos e delegar regra para `services`;
-- regras de negocio e integracoes externas entram em `services`;
-- prompts de IA ficam em arquivos `.md` dentro de `app/prompts`;
-- modelos de entrada/saida entram em `models`;
-- arquivos de entrada e saida de imagem ficam em `app/data`;
-- nomes de pastas/rotas de API devem permanecer em ingles.
+- novas rotas entram em `app/routers`.
+- configuracoes globais entram em `app/core`.
+- controller deve ser fino e delegar para `service`.
+- regra de negocio e integracao externa ficam em `app/services`.
+- prompts de IA ficam em `app/prompts/*.md`.
+- dados de imagem ficam em `app/data/input` e `app/data/output`.
+- nomes de diretorios, arquivos e rotas devem permanecer em ingles.
+
+## Regra de dados
+
+- `app/data/input`: manter apenas 1 imagem ativa (ultima enviada).
+- `app/data/output`: manter historico de multiplas imagens geradas.

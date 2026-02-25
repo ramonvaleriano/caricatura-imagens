@@ -6,7 +6,7 @@
 
 Retorna status basico de saude da API.
 
-Resposta esperada:
+Resposta esperada (200):
 
 ```json
 {
@@ -18,7 +18,7 @@ Resposta esperada:
 
 Rota padrao inicial.
 
-Resposta esperada:
+Resposta esperada (200):
 
 ```json
 {
@@ -32,14 +32,14 @@ Recebe uma foto via `multipart/form-data` no campo `file`.
 
 Regras:
 
-- aceita apenas extensoes permitidas;
-- remove automaticamente a foto anterior de entrada;
-- salva a nova foto com nome padrao + extensao original.
+- aceita apenas extensoes de `ALLOWED_INPUT_EXTENSIONS`;
+- remove automaticamente a foto anterior no `input`;
+- salva com nome `{INPUT_PHOTO_DEFAULT_NAME}.{ext}`.
 
 Request:
 
 - Content-Type: `multipart/form-data`
-- Campo obrigatorio: `file` (arquivo)
+- Campo obrigatorio: `file`
 
 Resposta de sucesso (200):
 
@@ -54,10 +54,10 @@ Resposta de sucesso (200):
 
 Erros possiveis:
 
-- `400`: nome de arquivo invalido ou arquivo vazio.
-- `415`: formato nao suportado.
-- `422`: payload invalido (ex: campo `file` ausente).
-- `500`: falha interna ao salvar arquivo.
+- `400` (`INVALID_FILE_NAME` ou `EMPTY_FILE`)
+- `415` (`UNSUPPORTED_FILE_FORMAT`)
+- `422` (payload invalido; campo `file` ausente)
+- `500` (`FAILED_TO_SAVE_INPUT_PHOTO`)
 
 ### `POST /photos/process`
 
@@ -65,34 +65,34 @@ Processa a foto atual no diretorio `input` com o agente e retorna a imagem resul
 
 Comportamento por configuracao:
 
-- `OPENAI_ENABLED=false`: retorna a mesma imagem de entrada (fallback).
-- `OPENAI_ENABLED=true`: chama OpenAI e aplica transformacao de IA.
+- `OPENAI_ENABLED=false`: fallback (retorna bytes da imagem original).
+- `OPENAI_ENABLED=true`: chama OpenAI Responses API para gerar imagem.
 
 Regras:
 
 - nao recebe payload no body;
 - exige existir exatamente 1 foto em `app/data/input`;
-- detecta automaticamente o formato da imagem retornada pelo agente;
-- salva o resultado em `app/data/output` como `output_photoN.<ext_detectada>`;
-- retorna o arquivo de imagem no response.
+- detecta automaticamente o formato da imagem retornada (`jpg`, `png`, `webp`);
+- salva em `app/data/output` como `output_photoN.<ext_detectada>`;
+- retorna o arquivo no response.
 
 Erros possiveis:
 
-- `404`: nenhuma foto no input.
-- `409`: mais de uma foto no input.
-- `415`: formato da foto de input nao suportado.
-- `500`: erro interno no agente ou ao salvar output.
+- `404` (`INPUT_PHOTO_NOT_FOUND`)
+- `409` (`MULTIPLE_INPUT_PHOTOS`)
+- `415` (`UNSUPPORTED_INPUT_FILE_FORMAT`)
+- `500` (`FAILED_TO_READ_INPUT_DIRECTORY`, `FAILED_TO_PROCESS_IMAGE`, `AGENT_RUNTIME_ERROR`, `EMPTY_AGENT_OUTPUT`, `FAILED_TO_SAVE_OUTPUT_PHOTO`)
 
-Requisitos de configuracao para IA real:
+Requisitos para IA real:
 
 - `OPENAI_ENABLED=true`
 - `OPENAI_API_KEY` configurada
-- dependencias instaladas via `requirements.txt`
 - prompts preenchidos em `app/prompts/image_developer_prompt.md` e `app/prompts/image_user_prompt.md`
+- dependencia `openai` instalada
 
 ### `GET /photos/output`
 
-Lista todas as fotos geradas pela IA no diretorio de saida.
+Lista todas as fotos geradas no diretorio de saida.
 
 Resposta de sucesso (200):
 
@@ -114,11 +114,11 @@ Resposta de sucesso (200):
 
 Erros possiveis:
 
-- `500`: falha interna ao listar arquivos.
+- `500` (`FAILED_TO_LIST_GENERATED_PHOTOS`)
 
 ### `GET /photos/output/{photo_name}`
 
-Retorna uma foto gerada sem precisar informar extensao.
+Retorna uma foto gerada pelo nome base, sem exigir extensao.
 
 Exemplo:
 
@@ -126,11 +126,11 @@ Exemplo:
 
 Possiveis status:
 
-- `200`: retorna o arquivo de imagem;
-- `400`: nome invalido;
-- `404`: foto nao encontrada;
-- `409`: mais de uma foto com mesmo nome base;
-- `500`: falha interna.
+- `200`: retorna arquivo de imagem
+- `400`: `INVALID_PHOTO_NAME`
+- `404`: `PHOTO_NOT_FOUND`
+- `409`: `AMBIGUOUS_PHOTO_NAME`
+- `500`: `FAILED_TO_READ_GENERATED_PHOTO`
 
 ## Exemplo de chamadas
 
@@ -143,16 +143,16 @@ curl -X POST "http://localhost:8000/photos/input" \
   -F "file=@/caminho/da/imagem.jpg"
 ```
 
+Processamento pelo agente:
+
+```bash
+curl -X POST "http://localhost:8000/photos/process" --output processed.bin
+```
+
 Listagem:
 
 ```bash
 curl -X GET "http://localhost:8000/photos/output"
-```
-
-Processamento pelo agente:
-
-```bash
-curl -X POST "http://localhost:8000/photos/process" --output processed.jpg
 ```
 
 Download por nome base:
@@ -161,8 +161,8 @@ Download por nome base:
 curl -X GET "http://localhost:8000/photos/output/output_photo1" --output output_photo1.jpg
 ```
 
-## Swagger
+## OpenAPI
 
-- URL: `http://localhost:8000/docs`
-- URL ReDoc: `http://localhost:8000/redoc`
+- Swagger: `http://localhost:8000/docs`
+- ReDoc: `http://localhost:8000/redoc`
 - Tags atuais: `Default`, `Photos`

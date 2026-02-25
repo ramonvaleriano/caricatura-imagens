@@ -40,7 +40,7 @@ Entrypoints:
 
 Modulos principais:
 
-- `app/core/settings.py`: configuracoes por `os.getenv` + `.env`.
+- `app/core/settings.py`: configuracoes por `os.getenv` + `.env` (`load_dotenv(..., override=True)`).
 - `app/core/ai_config.py`: normalizacao de configuracao da IA.
 - `app/core/prompt_loader.py`: leitura e cache de prompts `.md` usados pela IA.
 - `app/core/cors.py`: middleware CORS.
@@ -76,8 +76,9 @@ Diretorios de dados:
 - chama `process_image_with_agent(input_photo_path)`.
 - se `OPENAI_ENABLED=false`, retorna a mesma imagem (fallback).
 - se `OPENAI_ENABLED=true`, chama OpenAI Responses API.
+- detecta extensao de output por bytes (`jpg`, `png`, `webp`).
 - salva resultado em output com numeracao:
-  `OUTPUT_PHOTO_DEFAULT_NAME + N + extensao`
+  `OUTPUT_PHOTO_DEFAULT_NAME + N + extensao_detectada`
   Exemplo: `output_photo1.jpg`, `output_photo2.jpg`.
 - retorna o arquivo salvo no response.
 
@@ -117,7 +118,8 @@ Ao adicionar/alterar endpoint:
 - mapear erros previsiveis com codigos HTTP adequados;
 - incluir exemplos de response de erro no `responses`;
 - atualizar `docs/endpoints-e-contratos-atuais.md`;
-- atualizar tambem `docs/arquitetura-atual-da-api.md` e `docs/configuracao-de-ambiente.md` se houver impacto.
+- atualizar tambem `docs/arquitetura-atual-da-api.md` e `docs/configuracao-de-ambiente.md` se houver impacto;
+- atualizar `docs/diagnostico-e-troubleshooting.md` quando houver impacto operacional.
 
 ## 7) Variaveis de ambiente atuais
 

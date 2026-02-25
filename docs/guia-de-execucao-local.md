@@ -3,7 +3,7 @@
 ## Pre-requisitos
 
 - Python 3.10+
-- dependencias instaladas em `requirements.txt`
+- dependencias em `requirements.txt`
 
 ## Instalar dependencias
 
@@ -21,35 +21,70 @@ python3 main.py
 
 ## Subir servidor pelo VS Code
 
-Configuracoes ja disponiveis em `.vscode/launch.json`:
+Configuracoes disponiveis em `.vscode/launch.json`:
 
 - `API: Run (Auto Reload)`
 - `API: Debug`
 
-## Validar se subiu corretamente
+Ambas usam `.env` via `envFile`.
 
-1. Abrir `http://localhost:8000/docs`
-2. Abrir `http://localhost:8000/redoc`
-3. Testar `GET /health`
+## Validar startup
 
-## Modo de desenvolvimento
+1. abrir `http://localhost:8000/docs`
+2. abrir `http://localhost:8000/redoc`
+3. testar `GET /health`
 
-O `main.py` sobe o `uvicorn` com `reload=True`, entao toda alteracao de codigo reinicia o servidor automaticamente.
+## Fluxo rapido de teste do agente
 
-## Exemplo rapido de teste via curl
-
-```bash
-curl -X GET http://localhost:8000/health
-```
+### 1) Upload da imagem de entrada
 
 ```bash
-curl -X POST "http://localhost:8000/photos/process" --output processed.jpg
+curl -X POST "http://localhost:8000/photos/input" \
+  -H "accept: application/json" \
+  -H "Content-Type: multipart/form-data" \
+  -F "file=@/caminho/da/imagem.jpg"
 ```
 
-## Teste de IA real (OpenAI)
+### 2) Processar com agente
 
-1. Definir no `.env`:
+```bash
+curl -X POST "http://localhost:8000/photos/process" --output processed.bin
+```
+
+### 3) Listar imagens geradas
+
+```bash
+curl -X GET "http://localhost:8000/photos/output"
+```
+
+### 4) Baixar por nome base
+
+```bash
+curl -X GET "http://localhost:8000/photos/output/output_photo1" --output output_photo1.jpg
+```
+
+## Ativar IA real (OpenAI)
+
+No `.env`:
+
 - `OPENAI_ENABLED="true"`
 - `OPENAI_API_KEY="<SUA_CHAVE>"`
-2. Reiniciar a API
-3. Executar `POST /photos/process` novamente
+
+E manter prompts preenchidos em:
+
+- `app/prompts/image_developer_prompt.md`
+- `app/prompts/image_user_prompt.md`
+
+Depois reinicie a API.
+
+## Logs esperados no processamento
+
+Ao chamar `POST /photos/process`, espere logs nesta sequencia:
+
+1. `Processing input photo with agent ...`
+2. `Controller called | controller=image_agent ...`
+3. `Service called | service=image_generation_service ...`
+4. `Calling OpenAI ...` (quando `OPENAI_ENABLED=true`)
+5. `Photo processed | input_file=... output_file=...`
+
+Se nao aparecer `Calling OpenAI`, o processamento pode ter caido em fallback.
